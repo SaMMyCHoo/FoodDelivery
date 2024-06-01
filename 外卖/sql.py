@@ -84,8 +84,9 @@ def order_add(order):
     #增加订单
     db = open()
     cursor = db.cursor()
-    sql1 = """insert into order_table(OID,Uaddress,Uphone,Saddress,Sphone,Rphone,Rname,Ostate)
-                values ("{}","{}",{},"{}","{}","{}","{}")""".format(order.OID, order.Uaddress, order.Uphone, order.Saddress, order.Sphone, order.Rphone, order.Rname, order.Ostate)
+    sql1 = """insert into order_table(OID,Uaddress,Uphone,Saddress,Sphone,Rname,Rphone)
+                values ("{}","{}","{}","{}","{}","{}","{}")""".format(order.OID, order.Uaddr, order.Uphone, order.Saddr, order.Sphone, order.Rname, order.Rphone)
+    print(sql1)
     try:
         # 执行SQL语句
         cursor.execute(sql1)
@@ -112,12 +113,15 @@ def order_delete(order):
     except Exception as e:
         db.rollback()  # 事务回滚
         print('删除订单失败', e)
+        flag = (False, e)
     else:
         db.commit()  # 事务提交
         print('删除订单成功', cursor.rowcount)
+        flag = (True, "")
 
     # 关闭数据库连接
     db.close()
+    return flag
 
 def order_select(seachby, keyList):
     #订单单属性查询
@@ -185,7 +189,7 @@ def user_add(user):
     cursor = db.cursor()
     sql1 = """insert into user_table(UID,Uname,Uaddress,Uphone)
                 values ("{}","{}","{}","{}")""".format(user.UID, user.Uname, user.Uaddress, user.Uphone)
-    print(sql1)
+    # print(sql1)
     try:
         cursor.execute(sql1)
     except Exception as e:
@@ -277,7 +281,7 @@ def seller_add(seller):
     db = open()
     cursor = db.cursor()
     sql1 = """insert into seller_table(SID,Sname,Saddress,Sphone)
-                values ("{}","{}",{},"{}")""".format(seller.SID, seller.Sname, seller.Saddress, seller.Sphone)
+                values ("{}","{}","{}","{}")""".format(seller.SID, seller.Sname, seller.Saddr, seller.Sphone)
     try:
         cursor.execute(sql1)
     except Exception as e:
@@ -301,11 +305,14 @@ def seller_delete(seller):
     except Exception as e:
         db.rollback() 
         print('删除商家失败', e)
+        flag = (False, e)
     else:
         db.commit()  
         print('删除商家成功', cursor.rowcount)
+        flag = (True, "")
 
     db.close()
+    return flag
 
 def seller_select(seachby, keyList):
     db = open()
@@ -366,7 +373,7 @@ def rider_add(rider):
     db = open()
     cursor = db.cursor()
     sql1 = """insert into rider_table(RID,Rname,Rphone)
-                values ("{}","{}",{})""".format(rider.RID, rider.Rname, rider.Rphone)
+                values ("{}","{}","{}")""".format(rider.RID, rider.Rname, rider.Rphone)
     try:
         cursor.execute(sql1)
     except Exception as e:
@@ -390,11 +397,13 @@ def rider_delete(rider):
     except Exception as e:
         db.rollback() 
         print('删除骑手失败', e)
+        flag = (False, e)
     else:
         db.commit()  
         print('删除骑手成功', cursor.rowcount)
-
+        flag = (True, "")
     db.close()
+    return flag
 
 def rider_select(seachby, keyList):
     db = open()

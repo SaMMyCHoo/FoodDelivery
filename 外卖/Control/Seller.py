@@ -32,8 +32,7 @@ class SellerManager(object):
     def delete(self, seller):
         self.sellerSID.pop(seller.SID)
         self.SList.remove(seller)
-        sql.seller_delete(seller)
-        return True
+        return sql.seller_delete(seller)
 
     def multiSearch(self, keyList):
         # print(keyList)
@@ -44,7 +43,7 @@ class SellerManager(object):
             if keytext:
                 searchBy.append(searchby)
                 keyText.append(keytext)
-        msg = sql.Seller_multiselect(searchBy, keyText)
+        msg = sql.seller_multiselect(searchBy, keyText)
         #print(searchBy)
         #print(keyText)
         result = self.toSeller(msg)
@@ -80,7 +79,7 @@ class SellerManager(object):
         SList = []
         sellerSID = {}
         try:
-            msg = sql.Load("s_table")
+            msg = sql.Load("seller_table")
             result = self.toSeller(msg)
             for seller in result:
                 SList.append(seller)

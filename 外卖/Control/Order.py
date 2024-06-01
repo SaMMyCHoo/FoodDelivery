@@ -6,7 +6,9 @@ attributeList_order = [
     ("Saddr","商家地址"),
     ("Sphone","商家电话"),
     ("Uaddr", "配送地址"),
-    ("Uphone", "用户电话")
+    ("Uphone", "用户电话"),
+    ("Rname", "骑手姓名"),
+    ("Rphone", "骑手电话")
 ]
 
 class OrderManager(object):
@@ -18,17 +20,14 @@ class OrderManager(object):
         # 订单号 -> 订单对象
         self.order_OID = {}
 
-        # 订单状态： 0 -> None, 1 -> 商家已接单, 2 -> 订单已送达
-        self.status = 0
-
         self.load()
 
         self.emptyOrder = Order()
 
     def add(self, order):
-        order.SID = str(random.randint(0,999)).rjust(3, '0')
-        while(sql.check_user(order.SID, order)[0] == False):
-            order.SID = str(random.randint(0,999)).rjust(3, '0')
+        order.OID = str(random.randint(0,999)).rjust(3, '0')
+        while(sql.check_user(order.OID, order)[0] == False):
+            order.OID = str(random.randint(0,999)).rjust(3, '0')
         self.OList.append(order)
         self.order_OID[order.OID] = order
         return sql.order_add(order)
@@ -36,8 +35,7 @@ class OrderManager(object):
     def delete(self, order):
         self.order_OID.pop(order.OID)
         self.OList.remove(order)
-        sql.order_delete(order)
-        return True
+        return sql.order_delete(order)
     
     def edit(self, status):
         self.status = status
@@ -76,10 +74,12 @@ class OrderManager(object):
             # print(s)
             order = Order()
             order.OID = m[0]
-            order.Saddr = m[1]
-            order.Sphone = m[2]
-            order.Uaddr = m[3]
-            order.Uphone = m[4]
+            order.Uaddr = m[1]
+            order.Uphone = m[2]
+            order.Saddr = m[3]
+            order.Sphone = m[4]
+            order.Rname = m[5]
+            order.Rphone = m[6]
             result.append(order)
         return result
 
@@ -87,7 +87,7 @@ class OrderManager(object):
         OList = []
         order_OID = {}
         try:
-            msg = sql.Load("m_table")
+            msg = sql.Load("order_table")
             result = self.toorder(msg)
             for order in result:
                 OList.append(order)
@@ -105,7 +105,7 @@ class OrderManager(object):
     
 class Order(object):
     """订单类, 用于存储订单基本信息"""
-    def __init__(self, OID="", Saddr="", Sphone="", Uaddr="", Uphone="", Rname="", Rphone = ""):
+    def __init__(self, OID="", Uaddr="", Uphone="", Saddr="", Sphone="", Rname="", Rphone = ""):
         self.OID = OID
         self.Saddr = Saddr
         self.Sphone = Sphone

@@ -43,8 +43,8 @@ class UserManager(object):
                 searchBy.append(searchby)
                 keyText.append(keytext)
         msg = sql.user_multiselect(searchBy,keyText)
-        print(searchBy)
-        print(keyText)
+        # print(searchBy)
+        # print(keyText)
         result = self.touser(msg)
         return result
 
@@ -65,11 +65,10 @@ class UserManager(object):
         for i in range(len(msg)):
             # 创建每一个数据的user对象
             s = msg[i]
-            # print(s)
             user = User()
             user.UID = s[0]
             user.Uname = s[1]
-            user.Uaddr = s[2]
+            user.Uaddress = s[2]
             user.Uphone = s[3]
             result.append(user)
         return result
@@ -78,10 +77,10 @@ class UserManager(object):
         userList = []
         userUID = {}
         try:
-            msg = sql.Load("x_table")
+            msg = sql.Load("user_table")
             result = self.touser(msg)
             for user in result:
-                #print(user)
+                # print(user.Uname)
                 #创建每一个数据的user对象
                 userList.append(user)
                 userUID[user.UID] = user
@@ -115,7 +114,7 @@ class User(object):
     def copyTo(self, user):
         user.UID = self.UID
         user.Uname = self.Uname
-        user.Uaddr = self.Uaddr
+        user.Uaddress = self.Uaddress
         user.Uphone = self.Uphone
 
     def checkInfo(self,new=False):

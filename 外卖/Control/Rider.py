@@ -21,9 +21,9 @@ class RiderManager(object):
         self.emptyRider = Rider()
 
     def add(self, rider):
-        rider.SID = str(random.randint(0,999)).rjust(3, '0')
-        while(sql.check_user(rider.SID, rider)[0] == False):
-            rider.SID = str(random.randint(0,999)).rjust(3, '0')
+        rider.RID = str(random.randint(0,999)).rjust(3, '0')
+        while(sql.check_user(rider.RID, rider)[0] == False):
+            rider.RID = str(random.randint(0,999)).rjust(3, '0')
         self.RList.append(rider)
         self.rider_RID[rider.RID] = rider
         return sql.rider_add(rider)
@@ -31,8 +31,8 @@ class RiderManager(object):
     def delete(self, rider):
         self.rider_RID.pop(rider.RID)
         self.RList.remove(rider)
-        sql.rider_delete(rider)
-        return True
+        return sql.rider_delete(rider)
+        
 
     def multiSearch(self, keyList):
         # print(keyList)
@@ -77,7 +77,7 @@ class RiderManager(object):
         RList = []
         rider_RID = {}
         try:
-            msg = sql.Load("m_table")
+            msg = sql.Load("rider_table")
             result = self.torider(msg)
             for rider in result:
                 RList.append(rider)
