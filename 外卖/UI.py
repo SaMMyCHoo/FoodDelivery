@@ -61,7 +61,7 @@ class DatabaseUI:
         self.create_tab(self.tabControl, "配送员", ["配送员ID", "配送员名称", "配送员电话"])
         
         # 创建订单管理选项卡
-        self.create_tab(self.tabControl, "订单", ["订单ID", "顾客ID", "顾客姓名", "顾客地址", "顾客电话", "店家ID", "店家地址", "店家电话", "骑手ID", "骑手姓名", "骑手电话"])
+        self.create_tab(self.tabControl, "订单", ["订单ID", "顾客ID", "顾客名称", "顾客地址", "顾客电话", "店家ID", "店家名称", "店家地址", "店家电话", "骑手ID", "骑手姓名", "骑手电话"])
         
         self.tabControl.pack(expand=1, fill="both")
         
@@ -98,17 +98,23 @@ class DatabaseUI:
         input_frame = tk.Frame(tab)  # 创建一个新的输入框容器
         input_frame.pack(pady=10)
         
-        self.create_input_frame(input_frame, input_fields)
+        self.create_input_frame(input_frame, input_fields, 3 if entity == "订单" else 1)
         self.create_buttons(tab)
         
         # 保存Treeview对象到类属性中
         self.result_trees[entity] = result_tree
 
-    def create_input_frame(self, parent, fields):
+    def create_input_frame(self, parent, fields, num_columns):
+        num_fields = len(fields)
+        num_rows = (num_fields + num_columns - 1) // num_columns  # Calculate the number of rows needed
+
         for i, field in enumerate(fields):
-            tk.Label(parent, text=f"{field}：").grid(row=i, column=0, padx=5, pady=5, sticky="e")
+            row = i % num_rows
+            column = i // num_rows * 2  # Adjust column index to create multiple columns
+            tk.Label(parent, text=f"{field}：").grid(row=row, column=column, padx=5, pady=5, sticky="e")
             self.input_fields[field] = tk.Entry(parent)
-            self.input_fields[field].grid(row=i, column=1, padx=5, pady=5)
+            self.input_fields[field].grid(row=row, column=column + 1, padx=5, pady=5)  # Adjust column index for entry
+
         
     def create_buttons(self, parent):
         button_frame = tk.Frame(parent)
@@ -134,7 +140,7 @@ class DatabaseUI:
         if current_tab == "用户":
             # 执行用户查询操作
             id = input_values["用户ID"]
-            name = input_values["用户姓名"]
+            name = input_values["用户名称"]
             address = input_values["用户地址"]
             phone = input_values["用户电话"]
             keylist = []
@@ -339,7 +345,7 @@ class DatabaseUI:
             temp = self.user_sys.multiSearch([])            
             for i in range(len(temp)):
                 now = temp[i]
-                new = (now.UID, now.Uname, now.Uaddr, now.Uphone)
+                new = (now.UID, now.Uname, now.Uaddress, now.Uphone)
                 output.append(new)
 
         elif current_tab == "商家":
@@ -362,7 +368,7 @@ class DatabaseUI:
         elif current_tab == "配送员":
             # 执行骑手添加操作
             name = input_values["配送员名称"]
-            phone = input_values["配送员方式"]
+            phone = input_values["配送员电话"]
             temp = Rider(Rname = name, Rphone = phone)
             if not check(temp):
                 self.info_text.delete("1.0", tk.END)
@@ -552,18 +558,21 @@ class DatabaseUI:
         output = []
 
         if current_tab == "用户":
+            self.user_sys.load()
             temp = self.user_sys.multiSearch([])           
             for i in range(len(temp)):
                 now = temp[i]
                 new = (now.UID, now.Uname, now.Uaddress, now.Uphone)
                 output.append(new)    
         elif current_tab == "商家":
+            self.seller_sys.load()
             temp = self.seller_sys.multiSearch([])            
             for i in range(len(temp)):
                 now = temp[i]
                 new = (now.SID, now.Sname, now.Saddr, now.Sphone)
                 output.append(new)
         elif current_tab == "配送员":
+            self.rider_sys.load()
             temp = self.rider_sys.multiSearch([])            
             for i in range(len(temp)):
                 now = temp[i]
@@ -571,6 +580,7 @@ class DatabaseUI:
                 output.append(new)
                 
         elif current_tab == "订单":
+            self.order_sys.load()
             temp = self.order_sys.multiSearch([])
             for i in range(len(temp)):
                 now = temp[i]

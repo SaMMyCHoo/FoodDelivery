@@ -149,49 +149,60 @@ def order_search(seachby, keyList):
     
     results = []
 
+    if len(seachby) == 0:
+        sql = "select * from order_table "
+        try:
+            cursor.execute(sql)
+        except Exception as e:
+            db.rollback()
+            print('查询订单失败', e)
+        else:
+            results.append(cursor.fetchall())
+            print('查询订单成功', cursor.rowcount)
+    # print(results)
     for i in range(len(seachby)):
         if seachby[i] in ['UID', 'SID', 'RID', 'OID']:
-            sql = "select * from order_table where {} REGEXR '{}' ".format(seachby[i], keyList[i])
+            sql = "select * from order_table where {} REGEXP '{}' ".format(seachby[i], keyList[i])
             try:
                 cursor.execute(sql)
             except Exception as e:
                 db.rollback()
                 print('查询订单失败', e)
             else:
-                results.append([cursor.fetchall()])
+                results.append(cursor.fetchall())
                 print('查询订单成功', cursor.rowcount)
 
         elif seachby[i][0] == 'U':
-            sql = "select order_table.* from order_table, user_table where order_table.UID = user_table.UID and user_table.{} REGEXR '{}' ".format(seachby[i], keyList[i])
+            sql = "select order_table.* from order_table, user_table where order_table.UID = user_table.UID and user_table.{} REGEXP '{}' ".format(seachby[i], keyList[i])
             try:
                 cursor.execute(sql)
             except Exception as e:
                 db.rollback()
                 print('查询订单失败', e)
             else:
-                results.append([cursor.fetchall()])
+                results.append(cursor.fetchall())
                 print('查询订单成功', cursor.rowcount)
 
         elif seachby[i][0] == 'S':
-            sql = "select order_table.* from order_table, seller_table where order_table.SID = seller_table.SID and seller_table.{} REGEXR '{}' ".format(seachby[i], keyList[i])
+            sql = "select order_table.* from order_table, seller_table where order_table.SID = seller_table.SID and seller_table.{} REGEXP '{}' ".format(seachby[i], keyList[i])
             try:
                 cursor.execute(sql)
             except Exception as e:
                 db.rollback()
                 print('查询订单失败', e)
             else:
-                results.append([cursor.fetchall()])
+                results.append(cursor.fetchall())
                 print('查询订单成功', cursor.rowcount)
 
         elif seachby[i][0] == 'R':
-            sql = "select order_table.* from order_table, rider_table where order_table.RID = rider_table.RID and rider_table.{} REGEXR '{}' ".format(seachby[i], keyList[i])
+            sql = "select order_table.* from order_table, rider_table where order_table.RID = rider_table.RID and rider_table.{} REGEXP '{}' ".format(seachby[i], keyList[i])
             try:
                 cursor.execute(sql)
             except Exception as e:
                 db.rollback()
                 print('查询订单失败', e)
             else:
-                results.append([cursor.fetchall()])
+                results.append(cursor.fetchall())
                 print('查询订单成功', cursor.rowcount)
 
     db.close()

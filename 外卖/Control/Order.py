@@ -56,12 +56,22 @@ class OrderManager(object):
                 searchBy.append(searchby)
                 keyText.append(keytext)
         msgs = sql.order_search(searchBy, keyText)
-        
-        temp = [self.toorder(msg) for msg in msgs]
-        
+        print("msgs: ", msgs)
+        # exit()
+        def get_msg(itemlist):
+            res = []
+            for item in itemlist:
+                tmp = Order(item[0], item[1], item[2], item[3])
+                res.append(tmp)
+            return res
+
+        temp = [get_msg(msg) for msg in msgs]
+
         result = []
-        
+        if len(temp) == 0:
+            return result
         for item in temp[0]:
+            print("item:", item.OID, item.UID, item.SID, item.RID)
             ok = True
             for i in range(1, len(temp)):
                 if not check_in(item, temp[i]):
@@ -69,6 +79,7 @@ class OrderManager(object):
                     break
             if ok:
                 result.append(item)
+        print('result: ', result)
         return result
 
     def search(self, searchBy, keyList):
@@ -87,7 +98,7 @@ class OrderManager(object):
         for i in range(len(msg)):
             # 创建每一个数据的order对象
             m = msg[i]
-            # print(s)
+            # print(m)
             order = Order()
             order.OID = m[0]
             order.UID = m[1]
